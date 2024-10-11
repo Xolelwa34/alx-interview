@@ -6,19 +6,15 @@ Module that provides a function to determine all boxes in a given list
 
 def canUnlockAll(boxes):
     """
-    Determines whethe all boxes in the list can be opened
+    Return True if can be open, false if not
     """
-    if (type(boxes)) is not list:
-        return False
-    elif (len(boxes)) == 0:
-        return False
+    number_of_keys = [0]
+    number_of_boxes = len(boxes)
 
-    for k in range(1, len(boxes) - 1):
-        some_boxes = False
-        for idx in range(len(boxes));
-            some_boxes = k in boxes[idx] and k != idx
-            if some_boxes:
-                break
-        if some_boxes is False:
-            return some_boxes
-    return True
+    for keys in number_of_keys:
+        for box in boxes[keys]:
+            if box < number_of_boxes and box not in number_of_keys:
+                number_of_keys.append(box)
+    if len(number_of_keys) == number_of_boxes:
+        return True
+    return False
