@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """ Calculates the fewest number of operations needed
-    to result in exactly  n H characters in the file
+   to result in exactly n H characters in the file
 """
 
 
@@ -10,13 +10,18 @@ def minOperations(n):
     of operations for task Copy All and Paste
 
     Args:
-        n: input number of chars
+        n: input value
         factor_list: List to save the operations
-    Return: Sum of ops
+    Return: the sum of the operations
     """
-    if n ==1
+    if n < 2:
         return 0
-    elif n % 2 == 0:
-        return n // 2 + 1
-    else:
-        return 0
+    factor_list = []
+    i = 1
+    while n != 1:
+        i += 1
+        if n % i == 0:
+            while n % i == 0:
+                n /= i
+                factor_list.append(i)
+    return sum(factor_list)
