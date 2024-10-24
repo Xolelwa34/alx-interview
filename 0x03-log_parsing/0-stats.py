@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-"""
-Log parsing script that reads input line by line and computes metrics.
-"""
-
-
 import sys
 
 if __name__ == "__main__":
@@ -15,7 +9,7 @@ if __name__ == "__main__":
 
     def print_stats():
         '''
-        Prints file for every 10 loops
+        Prints file size and stats for every 10 loops
         '''
         print('File size: {}'.format(file_size[0]))
 
@@ -30,8 +24,11 @@ if __name__ == "__main__":
         try:
             line = line[:-1]
             word = line.split(' ')
+            # File size is last parameter on stdout
             file_size[0] += int(word[-1])
+            # Status code comes before file size
             status_code = int(word[-2])
+            # Move through dictionary of status codes
             if status_code in status_codes:
                 status_codes[status_code] += 1
         except BaseException:
@@ -40,6 +37,7 @@ if __name__ == "__main__":
     try:
         for line in sys.stdin:
             parse_stdin(line)
+            # print the stats after every 10 outputs
             if count % 10 == 0:
                 print_stats()
             count += 1
