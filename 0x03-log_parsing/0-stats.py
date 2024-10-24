@@ -3,60 +3,46 @@
 Log parsing script that reads input line by line and computes metrics.
 """
 
+
 import sys
 
-# Initialize counters and storage
-total_size = 0
-status_count = {
-    "200": 0, "301": 0, "400": 0, "401": 0,
-    "403": 0, "404": 0, "405": 0, "500": 0
-}
-line_count = 0
 
-def print_stats():
-    """Prints the accumulated statistics."""
-    print(f"File size: {total_size}")
-    for code in sorted(status_count.keys()):
-        if status_count[code] > 0:
-            print(f"{code}: {status_count[code]}")
+def log_parsing(line):
+    try:
+        parts = line.split('"')
+        ip_address = parts[0].strip()
+        date = parts[1].split()[0].strip('[')
+        status_code = int(parts[2].split()[1])
+        file_size = int(parts[2].split()[-1])
+        return ip_address, date, status_code, file_size
+    except IndexError:
+        return None
 
-try:
-    # Read input line by line from stdin
-    for line in sys.stdin:
-        try:
-            # Split line into parts based on the required format
-            parts = line.split()
-            # Validate the line format (IP - [date] "GET /projects/260 HTTP/1.1" status_code file_size)
-            if len(parts) < 7:
-                continue
+def compute_metrics(log_lines):
+    """
+    Computes metrics based on the parsed log lines.
 
-            # Extract status code and file size
-            status_code = parts[-2]
-            file_size = int(parts[-1])
+    Args:
+        log_lines (list): List of log lines.
 
-            # Update total file size
-            total_size += file_size
+    Returns:
+        dict: A dictionary containing computed metrics.
+    """
+    total_requests = 0
+    total_file_size = 0
+    unique_ips = set()
 
-            # Update status code count if it's a valid code
-            if status_code in status_count:
-                status_count[status_code] += 1
+    for line in log_lines:
+        parsed_data = parse_log_line(line)
+        if parsed_data:
+            ip_address, _, _, file_size = parsed_data
+            total_requests += 1
+            total_file_size += file_size
+            unique_ips.add(ip_address)
 
-        except (ValueError, IndexError):
-            # Skip lines with incorrect format or invalid data
-            continue
-
-        # Increment line count
-        line_count += 1
-
-        # Print stats after every 10 lines
-        if line_count % 10 == 0:
-            print_stats()
-
-except KeyboardInterrupt:
-    # Print stats on keyboard interruption
-    print_stats()
-    raise
-
-# Print any remaining stats at the end of input
-print_stats()
-
+    metrics = {
+        "total_requests": total_requests,
+        "total_file_size": total_file_size,
+        "unique_ips": len(unique_ips)
+    }
+    return metrics
