@@ -24,5 +24,5 @@ def makeChange(coins, total):
         if check == total:
             return ret
         check -= i
-        ret -= 1 
+        ret -= 1
     return -1
